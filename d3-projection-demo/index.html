@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>D3 Projection Demo</title>
+
+	<meta name="viewport" content="width=device-width">
+
+	<link rel="stylesheet" href="css/jquery.nouislider.css">
+	<link rel="stylesheet" href="css/jquery.tooltip.css">
+
+</head>
+
+<body>
+	<style>
+		body {
+			font-family: Arial, Helvetica, sans-serif;
+			width: 100%;
+			height: 100%;
+			margin: 0px;
+		}
+
+		h4 span {
+			font-weight: normal;
+		}
+
+		h1, h2 {
+			text-align: center;
+		}
+
+		h4 {
+			margin-top: 0px;
+		}
+
+		h3 {
+			margin-top: 20px;
+			margin-bottom: 10px;
+		}
+
+		.code {
+			border: 1px solid #AAA;
+			padding: 10px;
+			background-color: #DDD;
+		}
+
+		#parameters {
+			width: 40%;
+		}
+		
+		.map {
+			border: medium solid #999;
+			background-color: #e3f3fb;
+			float: right;
+			margin: 50px 20px 0px 0px;
+		}
+
+		.countries {
+		  fill: #000;
+		  stroke: #fff;
+		  stroke-width: 1px;
+		}
+
+		.counties {
+		  fill: none;
+		  stroke: #000;
+		  stroke-width: 0.5px;
+		  stroke-linecap: round;
+		}
+
+		.infolabel {
+			position: absolute;
+			color: #fff;
+			background-color: #000;
+			border: solid thin #fff;
+			padding: 5px;
+		}
+
+		.infolabel h1 {
+			margin: 0px;
+			padding: 0px;
+			display: inline-block;
+			line-height: 1em;
+			font-size: 2em;
+		}
+
+		.infolabel b {
+			float: left;
+		}
+
+		.labelname {
+			display: inline-block;
+			float: right;
+			margin: -25px 0px -10px 40px;
+			font-size: 1em;
+			font-weight: bold;
+		}
+
+		#legend {
+			height: 445px;
+			padding: 25px 10px 30px 10px;
+			margin-left: 840px;
+			border: medium solid #999;
+			background-color: #eee;
+			position: absolute;
+		}
+
+		#legtitle {
+			text-align: center;
+			margin-top: 25px;
+		}
+
+		#legtitle select {
+			margin: 30px;
+		}
+
+		.colorbox {
+			width: 50px;
+			height: 50px;
+		}
+
+		#legendColors {
+			float: left;
+			margin: 25px 10px 0 35px;
+		}
+
+		#legendScale {
+			margin-top: 10px;
+			float: left;
+		}
+
+		.legendNum {
+			padding: 3px 0px 28px 3px;
+		}
+
+		#attributeName {
+			text-align: center;
+			margin-top: 75px;
+		}
+		.slider {
+			margin: 10px 0px;
+			width: 200px
+		}
+		.container {
+			width: 98%;
+			margin: auto;
+		}
+		.indent {
+			margin: 0 0 0 30px;
+			line-height: 1.25em;
+		}
+
+	</style>
+
+	<!--libraries-->
+	<script src="lib/jquery.js"></script>
+	<script src="lib/d3.v3.js"></script>
+    <script src="lib/topojson.v1.min.js"></script>
+    <script src="lib/queue.js"></script>
+    <script src="lib/jquery.nouislider.js"></script>
+	
+	<div class="container">
+		<h1>D3 Albers Projection Demo</h1>
+		<svg width="55%" height="550" class="map"></svg>
+		
+		<div id="parameters">
+			<h2>Projection Parameters:</h2>
+			<table border=0>
+				<tr>
+					<td><h3>Center</h3></td>
+				</tr><tr>
+					<td><h4>Longitude: <span class="centerLong">0</span></h4>
+						<div id="sliderCenterLong" class="slider"></div>
+					</td>
+					<td><h4>Latitude: <span class="centerLat">33.6</span></h4>
+						<div id="sliderCenterLat" class="slider"></div>
+					</td>
+				</tr><tr>
+					<td><h3>Rotate</h3></td>
+				</tr><tr>
+					<td><h4>Longitude: <span class="rotateLong">81</span></h4>
+						<div id="sliderRotateLong" class="slider"></div>
+					</td>
+					<td><h4>Latitude: <span class="rotateLat">0</span></h4>
+						<div id="sliderRotateLat" class="slider"></div>
+					</td>
+				</tr><tr>
+					<td><h3>Standard Parallels</h3></td>
+				</tr><tr>
+					<td><h4>Parallel 1: <span class="parallel1">29.5</span></h4>
+						<div id="sliderParallel1" class="slider"></div>
+					</td>
+					<td><h4>Parallel 2: <span class="parallel2">45.5</span></h4>
+						<div id="sliderParallel2" class="slider"></div>
+					</td>
+				</tr><tr>
+					<td><h3>Scale</h3></td>
+				</tr><tr>
+					<td><h4><span class="scale">200</span></h4>
+						<div id="sliderScale" class="slider"></div>
+					</td>
+				</tr><tr>
+					<td><h3>Projection block</h3></td>
+				</tr><tr>
+					<td><code><div class="code">
+						var projection = d3.geo.albers()
+						<p class="indent">.center([<span class="centerLong">0</span>, <span class="centerLat">33.6</span>])</p>
+						<p class="indent">.rotate([<span class="rotateLong">81</span>, <span class="rotateLat">0</span>, 0])</p>
+						<p class="indent">.parallels([<span class="parallel1">29.5</span>, <span class="parallel2">45.5</span>])</p>
+						<p class="indent">.scale(<span class="scale">200</span>)</p>
+						<p class="indent">.translate(width / 2, height / 2]);</p>
+						</div>
+					</div></code></td>
+				</tr>
+			</table>
+		</div>	
+	</div>
+
+	<!--link to main javascript file-->
+	<script src="js/projection.js"></script>
+</body>
