@@ -6,7 +6,7 @@ This is the Github repository and website for web applications built to support 
 
 ---
 
-### D3 Albers Projection Demo Site: [uwcart.github.io/d3-projection-demo](http://uwcart.github.io/d3-projection-demo/)
+#### D3 Albers Projection Demo Site: [uwcart.github.io/d3-projection-demo](http://uwcart.github.io/d3-projection-demo/)
 
 ---
 
